@@ -3,11 +3,11 @@ function initPage() {
     const searchEl = document.getElementById("search-btn");
     const clearEl = document.getElementById("clear-btn");
     const nameEl = document.getElementById("city-name");
-    const currentPicEl = document.getElementById("current-pic");
-    const currentTempEl = document.getElementById("temperature");
-    const currentHumidityEl = document.getElementById("humidity");
-    const currentWindEl = document.getElementById("wind-speed");
-    const currentUVEl = document.getElementById("UV-index");
+    const picEl = document.getElementById("current-pic");
+    const tempEl = document.getElementById("temperature");
+    const humidityEl = document.getElementById("humidity");
+    const windEl = document.getElementById("wind-speed");
+    const uvEl = document.getElementById("UV-index");
     const historyEl = document.getElementById("history");
     var fivedayEl = document.getElementById("fiveday");
     var todayweatherEl = document.getElementById("current-weather");
@@ -16,15 +16,15 @@ function initPage() {
     const APIKey = "e685d10cedf0167b79a9d39d41a569b3";
 
     function checkWeather(cityName) {
-        // Execute a current weather get request from open weather api
+        // request from open weather api for current weather
         let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + APIKey;
         axios.get(queryURL)
-            .then(function (response){
+            .then(function (response) {
                 console.log(response)
 
                 todayweatherEl.classList.remove("d-none");
 
-                // Parse response to display current weather
+                // Parse data to display current weather
                 const currentDate = new Date(response.data.dt * 1000);
                 console.log(currentDate)
                 const day = currentDate.getDate();
@@ -32,22 +32,22 @@ function initPage() {
                 const year = currentDate.getFullYear();
                 nameEl.innerHTML = response.data.name + " (" + month + "/" + day + "/" + year + ") ";
                 let weatherPic = response.data.weather[0].icon;
-                currentPicEl.setAttribute("src", "https://openweathermap.org/img/wn/" + weatherPic + "@2x.png");
-                currentPicEl.setAttribute("alt", response.data.weather[0].description);
-                currentTempEl.innerHTML = "Temperature: " + k2f(response.data.main.temp) + " &#176F";
-                currentHumidityEl.innerHTML = "Humidity: " + response.data.main.humidity + "%";
-                currentWindEl.innerHTML = "Wind Speed: " + response.data.wind.speed + " MPH";
-                
-                // Get UV Index
+                picEl.setAttribute("src", "https://openweathermap.org/img/wn/" + weatherPic + "@2x.png");
+                picEl.setAttribute("alt", response.data.weather[0].description);
+                tempEl.innerHTML = "Temperature: " + k2f(response.data.main.temp) + " &#176F";
+                humidityEl.innerHTML = "Humidity: " + response.data.main.humidity + "%";
+                windEl.innerHTML = "Wind Speed: " + response.data.wind.speed + " MPH";
+
+                // Gets UV Index
                 let lat = response.data.coord.lat;
                 let lon = response.data.coord.lon;
                 let UVQueryURL = "https://api.openweathermap.org/data/2.5/uvi/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + APIKey + "&cnt=1";
                 axios.get(UVQueryURL)
                     .then(function (response) {
                         let UVIndex = document.createElement("span");
-                        
-                        // When UV Index is good, shows green, when ok shows yellow, when bad shows red
-                        if (response.data[0].value < 4 ) {
+
+                        // UV index color changes based on value
+                        if (response.data[0].value < 4) {
                             UVIndex.setAttribute("class", "badge badge-success");
                         }
                         else if (response.data[0].value < 8) {
@@ -58,15 +58,15 @@ function initPage() {
                         }
                         console.log(response.data[0].value)
                         UVIndex.innerHTML = response.data[0].value;
-                        currentUVEl.innerHTML = "UV Index: ";
-                        currentUVEl.append(UVIndex);
+                        uvEl.innerHTML = "UV Index: ";
+                        uvEl.append(UVIndex);
                     });
 
-            
+
             });
     }
 
-    // Get history from local storage if any
+    //  PullsHistory from local storage
     searchEl.addEventListener("click", function () {
         const searchTerm = cityEl.value;
         checkWeather(searchTerm);
@@ -105,7 +105,7 @@ function initPage() {
     if (searchHistory.length > 0) {
         checkWeather(searchHistory[searchHistory.length - 1]);
     }
-    
+
 }
 
 initPage();
