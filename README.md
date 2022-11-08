@@ -11,6 +11,8 @@ Search for the city that you would like to know the weather current weather in. 
 
  ## Screenshot
 
+ ![Screenshot of application](./assets/images/screenshot.png)
+
  ![Screenshot of application](./assets/images/screenshot-1.png)
 
 
